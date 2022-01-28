@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.2"
     defaultConfig {
         applicationId "edu.byu.cs.tweeter"
         minSdkVersion 30
@@ -44,8 +43,8 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 
     // requires test/resources/mockito-extensions/org.mockito.plugins.MockMaker to have content "mock-maker-inline"
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.0.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.3.1'
 
-    androidTestImplementation group: 'org.mockito', name: 'mockito-android', version: '4.0.0'
+    androidTestImplementation group: 'org.mockito', name: 'mockito-android', version: '4.3.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
