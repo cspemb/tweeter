@@ -9,8 +9,8 @@ public class LoginPresenter {
         void login(User user);
     }
 
-    private View view;
-    private UserService userService;
+    private final View view;
+    private final UserService userService;
 
     public LoginPresenter(View view) {
         this.view = view;

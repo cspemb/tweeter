@@ -10,8 +10,6 @@ import edu.byu.cs.tweeter.model.domain.User;
 public class FollowersPresenter {
     private static final int PAGE_SIZE = 10;
 
-
-
     public interface View {
         void displayErrorMessage(String message);
         void setLoadingStatus(boolean isLoading);
@@ -19,12 +17,13 @@ public class FollowersPresenter {
         void showUser(User user);
     }
 
-    private View view;
-    private FollowService followService;
+    private final View view;
+    private final FollowService followService;
+    private final UserService userService;
+
+    private boolean isLoading = false;
     private User lastFollower;
     private boolean hasMorePages;
-
-    private UserService userService;
 
     public boolean hasMorePages() {
         return hasMorePages;
@@ -38,12 +37,6 @@ public class FollowersPresenter {
         return isLoading;
     }
 
-    public void setLoading(boolean loading) {
-        isLoading = loading;
-    }
-
-    private boolean isLoading = false;
-
     public FollowersPresenter(View view) {
         this.view = view;
         followService = new FollowService();
@@ -53,7 +46,7 @@ public class FollowersPresenter {
     public void loadMoreItems(User user) {
         if (!isLoading()) {   // This guard is important for avoiding a race condition in the scrolling code.
             isLoading = true;
-            view.setLoadingStatus(isLoading);
+            view.setLoadingStatus(true);
             followService.getFollowers(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastFollower, new GetFollowersObserver());
         }
     }
@@ -63,7 +56,7 @@ public class FollowersPresenter {
         @Override
         public void handleSuccess(List<User> followers, boolean hasMorePages) {
             isLoading = false;
-            view.setLoadingStatus(isLoading);
+            view.setLoadingStatus(false);
 
             lastFollower = (followers.size() > 0) ? followers.get(followers.size() - 1) : null;
             setHasMorePages(hasMorePages);
@@ -73,20 +66,19 @@ public class FollowersPresenter {
         @Override
         public void handleFailure(String message) {
             isLoading = false;
-            view.setLoadingStatus(isLoading);
+            view.setLoadingStatus(false);
             view.displayErrorMessage("Failed to get followers: " + message);
         }
 
         @Override
         public void handleException(Exception exception) {
             isLoading = false;
-            view.setLoadingStatus(isLoading);
+            view.setLoadingStatus(false);
             view.displayErrorMessage("Failed to get followers because of exception: " + exception.getMessage());
         }
     }
 
     // Get User
-
     public class GetUserObserver implements UserService.GetUserObserver {
 
         @Override

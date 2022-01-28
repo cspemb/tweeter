@@ -18,8 +18,8 @@ public class RegisterPresenter {
         void register(User user);
     }
 
-    private View view;
-    private UserService userService;
+    private final View view;
+    private final UserService userService;
 
     public RegisterPresenter(View view) {
         this.view = view;

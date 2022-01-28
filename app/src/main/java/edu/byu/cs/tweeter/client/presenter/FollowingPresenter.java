@@ -19,13 +19,14 @@ public class FollowingPresenter {
         void showUser(User user);
     }
 
-    private View view;
+    private final View view;
 
-    private FollowService followService;
+    private final UserService userService;
+    private final FollowService followService;
+
+    private boolean isLoading = false;
     private User lastFollowee;
     private boolean hasMorePages;
-
-    private UserService userService;
 
     public boolean hasMorePages() {
         return hasMorePages;
@@ -39,12 +40,6 @@ public class FollowingPresenter {
         return isLoading;
     }
 
-    public void setLoading(boolean loading) {
-        isLoading = loading;
-    }
-
-    private boolean isLoading = false;
-
     public FollowingPresenter(View view) {
         this.view = view;
         this.followService = new FollowService();
@@ -55,7 +50,7 @@ public class FollowingPresenter {
     public void loadMoreItems(User user) {
         if (!isLoading) {   // This guard is important for avoiding a race condition in the scrolling code.
             isLoading = true;
-            view.setLoadingStatus(isLoading);
+            view.setLoadingStatus(true);
 
             followService.getFollowing(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastFollowee, new GetFollowingObserver());
         }
@@ -67,7 +62,7 @@ public class FollowingPresenter {
         @Override
         public void handleSuccess(List<User> followees, boolean hasMorePages) {
             isLoading = false;
-            view.setLoadingStatus(isLoading);
+            view.setLoadingStatus(false);
 
             lastFollowee = (followees.size() > 0) ? followees.get(followees.size() - 1) : null;
             setHasMorePages(hasMorePages);
@@ -77,7 +72,7 @@ public class FollowingPresenter {
         @Override
         public void handleFailure(String message) {
             isLoading = false;
-            view.setLoadingStatus(isLoading);
+            view.setLoadingStatus(false);
 
             view.displayErrorMessage("Failed to get following: " + message);
         }
@@ -85,7 +80,7 @@ public class FollowingPresenter {
         @Override
         public void handleException(Exception exception) {
             isLoading = false;
-            view.setLoadingStatus(isLoading);
+            view.setLoadingStatus(false);
 
             view.displayErrorMessage( "Failed to get following because of exception: " + exception.getMessage());
         }
