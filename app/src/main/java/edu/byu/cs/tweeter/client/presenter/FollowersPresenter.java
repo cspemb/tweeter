@@ -4,21 +4,27 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.FollowService;
+import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowersPresenter {
     private static final int PAGE_SIZE = 10;
 
+
+
     public interface View {
         void displayErrorMessage(String message);
         void setLoadingStatus(boolean isLoading);
         void addFollowers(List<User> followers);
+        void showUser(User user);
     }
 
     private View view;
     private FollowService followService;
     private User lastFollower;
     private boolean hasMorePages;
+
+    private UserService userService;
 
     public boolean hasMorePages() {
         return hasMorePages;
@@ -41,6 +47,7 @@ public class FollowersPresenter {
     public FollowersPresenter(View view) {
         this.view = view;
         followService = new FollowService();
+        userService = new UserService();
     }
 
     public void loadMoreItems(User user) {
@@ -76,5 +83,28 @@ public class FollowersPresenter {
             view.setLoadingStatus(isLoading);
             view.displayErrorMessage("Failed to get followers because of exception: " + exception.getMessage());
         }
+    }
+
+    // Get User
+
+    public class GetUserObserver implements UserService.GetUserObserver {
+
+        @Override
+        public void handleSuccess(User user) {
+            view.showUser(user);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayErrorMessage("Failed to get user's profile: " + message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayErrorMessage("Failed to get user's profile because of exception: " + exception.getMessage());
+        }
+    }
+    public void getUser(String alias) {
+        userService.getUser(Cache.getInstance().getCurrUserAuthToken(), alias, new GetUserObserver());
     }
 }
