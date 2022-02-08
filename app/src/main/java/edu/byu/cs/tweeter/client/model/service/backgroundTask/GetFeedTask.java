@@ -18,15 +18,9 @@ import edu.byu.cs.tweeter.util.Pair;
  * Background task that retrieves a page of statuses from a user's feed.
  */
 public class GetFeedTask extends PagedTask<Status> {
-    public static final String STATUSES_KEY = "statuses";
     public GetFeedTask(AuthToken authToken, User targetUser, int limit, Status lastStatus,
                        Handler messageHandler) {
         super(messageHandler, authToken, limit, lastStatus, targetUser);
-    }
-
-    @Override
-    protected String getItemsKey() {
-        return STATUSES_KEY;
     }
 
     @Override

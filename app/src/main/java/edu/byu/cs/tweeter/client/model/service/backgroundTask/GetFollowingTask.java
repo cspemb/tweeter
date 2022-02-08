@@ -17,15 +17,9 @@ import edu.byu.cs.tweeter.util.Pair;
  * Background task that retrieves a page of other users being followed by a specified user.
  */
 public class GetFollowingTask extends PagedTask<User> {
-    public static final String FOLLOWEES_KEY = "followees";
     public GetFollowingTask(AuthToken authToken, User targetUser, int limit, User lastFollowee,
                             Handler messageHandler) {
         super(messageHandler, authToken, limit, lastFollowee, targetUser);
-    }
-
-    @Override
-    protected String getItemsKey() {
-        return FOLLOWEES_KEY;
     }
 
     @Override

@@ -11,6 +11,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.util.Pair;
 
 public abstract class PagedTask<T> extends AuthorizedTask {
+    public static final String ITEMS_KEY = "items";
     public static final String MORE_PAGES_KEY = "more-pages";
 
     /**
@@ -48,8 +49,6 @@ public abstract class PagedTask<T> extends AuthorizedTask {
         this.targetUser = targetUser;
     }
 
-    protected abstract String getItemsKey();
-
     @Override
     protected void runTask() {
         Pair<List<T>, Boolean> pageOfItems = getItems();
@@ -60,7 +59,7 @@ public abstract class PagedTask<T> extends AuthorizedTask {
 
     @Override
     protected void loadMessageBundle(Bundle msgBundle) {
-        msgBundle.putSerializable(getItemsKey(), (Serializable) items);
+        msgBundle.putSerializable(ITEMS_KEY, (Serializable) items);
         msgBundle.putBoolean(MORE_PAGES_KEY, hasMorePages);
     }
 

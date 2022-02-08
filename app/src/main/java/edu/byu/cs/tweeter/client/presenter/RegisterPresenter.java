@@ -7,7 +7,8 @@ import android.graphics.drawable.Drawable;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
-import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.observers.UserTaskObserver;
+import edu.byu.cs.tweeter.client.model.service.services.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class RegisterPresenter {
@@ -58,7 +59,7 @@ public class RegisterPresenter {
         return "";
     }
 
-    public class RegisterObserver implements UserService.RegisterObserver {
+    public class RegisterObserver implements UserTaskObserver {
         @Override
         public void handleSuccess(User user) {
             view.register(user);

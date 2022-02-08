@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.observers.UserTaskObserver;
+import edu.byu.cs.tweeter.client.model.service.services.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class LoginPresenter {
@@ -44,7 +45,7 @@ public class LoginPresenter {
         return "";
     }
 
-    public class LoginObserver implements UserService.LoginObserver {
+    public class LoginObserver implements UserTaskObserver {
 
         @Override
         public void handleSuccess(User user) {

@@ -9,9 +9,12 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.byu.cs.tweeter.client.model.service.FollowService;
-import edu.byu.cs.tweeter.client.model.service.StatusService;
-import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.observers.CountTaskObserver;
+import edu.byu.cs.tweeter.client.model.service.observers.SetterTaskObserver;
+import edu.byu.cs.tweeter.client.model.service.observers.ToggleFollowObserver;
+import edu.byu.cs.tweeter.client.model.service.services.FollowService;
+import edu.byu.cs.tweeter.client.model.service.services.StatusService;
+import edu.byu.cs.tweeter.client.model.service.services.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class MainPresenter {
@@ -74,7 +77,7 @@ public class MainPresenter {
         followService.updateSelectedUserFollowingAndFollowers(selectedUser, new GetFollowersCountObserver(), new GetFollowingCountObserver());
     }
 
-    public class GetFollowingCountObserver implements FollowService.GetFollowingCountObserver {
+    public class GetFollowingCountObserver implements CountTaskObserver {
 
         @Override
         public void handleSuccess(int count) {
@@ -92,7 +95,7 @@ public class MainPresenter {
         }
     }
 
-    public class GetFollowersCountObserver implements FollowService.GetFollowersCountObserver {
+    public class GetFollowersCountObserver implements CountTaskObserver {
 
         @Override
         public void handleSuccess(int count) {
@@ -111,7 +114,7 @@ public class MainPresenter {
     }
 
     //Unfollow
-    public class UnfollowObserver implements FollowService.UnfollowObserver {
+    public class UnfollowObserver implements ToggleFollowObserver {
 
         @Override
         public void handleSuccess() {
@@ -140,7 +143,7 @@ public class MainPresenter {
     }
 
     //Follow
-    public class FollowObserver implements FollowService.FollowObserver {
+    public class FollowObserver implements ToggleFollowObserver {
 
         @Override
         public void handleSuccess() {
@@ -234,7 +237,7 @@ public class MainPresenter {
         }
     }
 
-    public class PostStatusObserver implements StatusService.PostStatusObserver {
+    public class PostStatusObserver implements SetterTaskObserver {
 
         @Override
         public void handleSuccess() {
@@ -263,7 +266,7 @@ public class MainPresenter {
     }
 
     //Logout
-    public class LogoutObserver implements UserService.LogoutObserver {
+    public class LogoutObserver implements SetterTaskObserver {
 
         @Override
         public void handleSuccess() {
