@@ -11,6 +11,8 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.BackgroundTask;
 public abstract class BackgroundTaskHandler extends Handler {
     protected BackgroundTaskObserver observer;
 
+    protected abstract BackgroundTaskObserver getObserver();
+
     public BackgroundTaskHandler(BackgroundTaskObserver observer) {
         this.observer = observer;
     }

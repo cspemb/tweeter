@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.client.presenter;
+package edu.byu.cs.tweeter.client.presenter.presenters;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -11,20 +11,21 @@ import edu.byu.cs.tweeter.client.model.service.observers.UserTaskObserver;
 import edu.byu.cs.tweeter.client.model.service.services.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class RegisterPresenter {
-
-
-    public interface View {
-        void displayErrorMessage(String message);
+public class RegisterPresenter extends Presenter {
+    public interface RegisterView extends View {
         void register(User user);
     }
 
-    private final View view;
     private final UserService userService;
 
-    public RegisterPresenter(View view) {
-        this.view = view;
+    public RegisterPresenter(RegisterView view) {
+        super(view);
         userService = new UserService();
+    }
+
+    @Override
+    protected RegisterView getView() {
+        return (RegisterView) view;
     }
 
     public String validateRegistration(String firstName, String lastName, String alias, String password, Drawable imageToUpload) {
@@ -59,22 +60,18 @@ public class RegisterPresenter {
         return "";
     }
 
-    public class RegisterObserver implements UserTaskObserver {
+    public class RegisterObserver extends TaskObserver implements UserTaskObserver {
         @Override
         public void handleSuccess(User user) {
-            view.register(user);
+            getView().register(user);
         }
 
         @Override
-        public void handleFailure(String message) {
-            view.displayErrorMessage("Failed to register: " + message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.displayErrorMessage("Failed to register because of exception: " + exception.getMessage());
+        protected String getErrorPrompt() {
+            return "Failed to register";
         }
     }
+
     public void register(String firstName, String lastName, String alias, String password, Drawable imageToUpload) {
         // Convert image to byte array.
         Bitmap image = ((BitmapDrawable) imageToUpload).getBitmap();

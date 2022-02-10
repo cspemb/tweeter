@@ -46,7 +46,12 @@ public class FollowService extends Service{
         executor.execute(isFollowerTask);
     }
 
-    private class IsFollowerHandler extends BackgroundTaskHandler {
+    private static class IsFollowerHandler extends BackgroundTaskHandler {
+
+        @Override
+        protected IsFollowerObserver getObserver() {
+            return (IsFollowerObserver) observer;
+        }
 
         public IsFollowerHandler(BackgroundTaskObserver observer) {
             super(observer);
@@ -56,7 +61,7 @@ public class FollowService extends Service{
         protected void handleSuccess(Message msg) {
             boolean isFollower = msg.getData().getBoolean(IsFollowerTask.IS_FOLLOWER_KEY);
 
-            ((IsFollowerObserver) observer).handleSuccess(isFollower);
+            getObserver().handleSuccess(isFollower);
         }
     }
 
@@ -74,7 +79,7 @@ public class FollowService extends Service{
         executor.execute(followingCountTask);
     }
 
-    private class GetCountHandler extends BackgroundTaskHandler {
+    private static class GetCountHandler extends BackgroundTaskHandler {
         private final String COUNT_KEY;
 
         public GetCountHandler(CountTaskObserver observer, String COUNT_KEY) {
@@ -83,9 +88,14 @@ public class FollowService extends Service{
         }
 
         @Override
+        protected CountTaskObserver getObserver() {
+            return (CountTaskObserver) observer;
+        }
+
+        @Override
         protected void handleSuccess(Message msg) {
             int count = msg.getData().getInt(COUNT_KEY);
-            ((CountTaskObserver) observer).handleSuccess(count);
+            getObserver().handleSuccess(count);
         }
     }
 
@@ -103,15 +113,20 @@ public class FollowService extends Service{
         executor.execute(followTask);
     }
 
-    private class ToggleFollowHandler extends BackgroundTaskHandler {
+    private static class ToggleFollowHandler extends BackgroundTaskHandler {
         public ToggleFollowHandler(ToggleFollowObserver observer) {
             super(observer);
         }
 
         @Override
+        protected ToggleFollowObserver getObserver() {
+            return (ToggleFollowObserver) observer;
+        }
+
+        @Override
         protected void handleSuccess(Message msg) {
-            ((ToggleFollowObserver) observer).updateSelectedUserFollowingAndFollowers();
-            ((ToggleFollowObserver) observer).handleSuccess();
+            getObserver().updateSelectedUserFollowingAndFollowers();
+            getObserver().handleSuccess();
         }
     }
 }

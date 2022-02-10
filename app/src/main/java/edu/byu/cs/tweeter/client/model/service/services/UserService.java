@@ -20,9 +20,14 @@ public class UserService extends Service {
     /**
      * Message handler (i.e., observer) for LoginTask
      */
-    private class LoginHandler extends BackgroundTaskHandler {
+    private static class LoginHandler extends BackgroundTaskHandler {
         public LoginHandler(UserTaskObserver observer) {
             super(observer);
+        }
+
+        @Override
+        protected UserTaskObserver getObserver() {
+            return (UserTaskObserver) observer;
         }
 
         @Override
@@ -34,7 +39,7 @@ public class UserService extends Service {
             Cache.getInstance().setCurrUser(loggedInUser);
             Cache.getInstance().setCurrUserAuthToken(authToken);
 
-            ((UserTaskObserver) observer).handleSuccess(loggedInUser);
+            getObserver().handleSuccess(loggedInUser);
         }
     }
 
@@ -47,9 +52,14 @@ public class UserService extends Service {
 
 
     // REGISTER
-    private class RegisterHandler extends BackgroundTaskHandler {
+    private static class RegisterHandler extends BackgroundTaskHandler {
         public RegisterHandler(UserTaskObserver observer) {
             super(observer);
+        }
+
+        @Override
+        protected UserTaskObserver getObserver() {
+            return (UserTaskObserver) observer;
         }
 
         @Override
@@ -60,7 +70,7 @@ public class UserService extends Service {
             Cache.getInstance().setCurrUser(registeredUser);
             Cache.getInstance().setCurrUserAuthToken(authToken);
 
-            ((UserTaskObserver) observer).handleSuccess(registeredUser);
+            getObserver().handleSuccess(registeredUser);
         }
     }
     public void register(String firstName, String lastName, String alias, String password, String imageBytesBase64, UserTaskObserver observer) {
@@ -76,14 +86,19 @@ public class UserService extends Service {
         executor.execute(logoutTask);
     }
 
-    private class LogoutHandler extends BackgroundTaskHandler {
+    private static class LogoutHandler extends BackgroundTaskHandler {
         public LogoutHandler(SetterTaskObserver observer) {
             super(observer);
         }
 
         @Override
+        protected SetterTaskObserver getObserver() {
+            return (SetterTaskObserver) observer;
+        }
+
+        @Override
         protected void handleSuccess(Message msg) {
-            ((SetterTaskObserver) observer).handleSuccess();
+            getObserver().handleSuccess();
         }
     }
 
@@ -91,16 +106,21 @@ public class UserService extends Service {
     /**
      * Message handler (i.e., observer) for GetUserTask.
      */
-    private class GetUserHandler extends BackgroundTaskHandler {
+    private static class GetUserHandler extends BackgroundTaskHandler {
         public GetUserHandler(UserTaskObserver observer) {
             super(observer);
+        }
+
+        @Override
+        protected UserTaskObserver getObserver() {
+            return (UserTaskObserver) observer;
         }
 
         @Override
         protected void handleSuccess(Message msg) {
             User user = (User) msg.getData().getSerializable(GetUserTask.USER_KEY);
 
-            ((UserTaskObserver) observer).handleSuccess(user);
+            getObserver().handleSuccess(user);
         }
     }
     public void getUser(AuthToken currUserAuthToken, String alias, UserTaskObserver getUserObserver) {

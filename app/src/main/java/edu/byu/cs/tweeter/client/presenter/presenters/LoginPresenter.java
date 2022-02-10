@@ -1,21 +1,24 @@
-package edu.byu.cs.tweeter.client.presenter;
+package edu.byu.cs.tweeter.client.presenter.presenters;
 
 import edu.byu.cs.tweeter.client.model.service.observers.UserTaskObserver;
 import edu.byu.cs.tweeter.client.model.service.services.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class LoginPresenter {
-    public interface View {
-        void displayErrorMessage(String message);
+public class LoginPresenter extends Presenter {
+    public interface LoginView extends View {
         void login(User user);
     }
 
-    private final View view;
     private final UserService userService;
 
-    public LoginPresenter(View view) {
-        this.view = view;
+    public LoginPresenter(LoginView view) {
+        super(view);
         userService = new UserService();
+    }
+
+    @Override
+    protected LoginView getView() {
+        return (LoginView) view;
     }
 
     /**
@@ -45,21 +48,16 @@ public class LoginPresenter {
         return "";
     }
 
-    public class LoginObserver implements UserTaskObserver {
+    public class LoginObserver extends TaskObserver implements UserTaskObserver {
 
         @Override
         public void handleSuccess(User user) {
-            view.login(user);
+            getView().login(user);
         }
 
         @Override
-        public void handleFailure(String message) {
-            view.displayErrorMessage("Failed to login: " + message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.displayErrorMessage("Failed to login because of exception: " + exception.getMessage());
+        protected String getErrorPrompt() {
+            return "Failed to login";
         }
     }
 

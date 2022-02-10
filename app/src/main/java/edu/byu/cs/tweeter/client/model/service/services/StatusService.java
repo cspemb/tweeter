@@ -38,14 +38,19 @@ public class StatusService extends Service {
         executor.execute(statusTask);
     }
 
-    private class PostStatusHandler extends BackgroundTaskHandler {
+    private static class PostStatusHandler extends BackgroundTaskHandler {
         public PostStatusHandler(SetterTaskObserver observer) {
             super(observer);
         }
 
         @Override
+        protected SetterTaskObserver getObserver() {
+            return (SetterTaskObserver) observer;
+        }
+
+        @Override
         protected void handleSuccess(Message msg) {
-            ((SetterTaskObserver) observer).handleSuccess();
+            getObserver().handleSuccess();
         }
     }
 }
