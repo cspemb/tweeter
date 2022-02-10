@@ -18,7 +18,7 @@ public class UserService extends Service {
 
     //LOGIN
     /**
-     * Message handler (i.e., observer) for LoginTask
+     * Message handler (i.e., observer) for LoginTask and RegisterTask
      */
     private static class LoginHandler extends BackgroundTaskHandler {
         public LoginHandler(UserTaskObserver observer) {
@@ -50,33 +50,10 @@ public class UserService extends Service {
         executor.execute(loginTask);
     }
 
-
-    // REGISTER
-    private static class RegisterHandler extends BackgroundTaskHandler {
-        public RegisterHandler(UserTaskObserver observer) {
-            super(observer);
-        }
-
-        @Override
-        protected UserTaskObserver getObserver() {
-            return (UserTaskObserver) observer;
-        }
-
-        @Override
-        protected void handleSuccess(Message msg) {
-            User registeredUser = (User) msg.getData().getSerializable(RegisterTask.USER_KEY);
-            AuthToken authToken = (AuthToken) msg.getData().getSerializable(RegisterTask.AUTH_TOKEN_KEY);
-
-            Cache.getInstance().setCurrUser(registeredUser);
-            Cache.getInstance().setCurrUserAuthToken(authToken);
-
-            getObserver().handleSuccess(registeredUser);
-        }
-    }
     public void register(String firstName, String lastName, String alias, String password, String imageBytesBase64, UserTaskObserver observer) {
         // Send register request.
         RegisterTask registerTask = new RegisterTask(firstName, lastName,
-                alias, password, imageBytesBase64, new RegisterHandler(observer));
+                alias, password, imageBytesBase64, new LoginHandler(observer));
         executor.execute(registerTask);
     }
 
