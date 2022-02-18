@@ -66,8 +66,8 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
                 statusDialogFragment.show(getSupportFragmentManager(), "post-status-dialog");
             }
         });
-        presenter = new MainPresenter(this, selectedUser);
-        presenter.updateSelectedUserFollowingAndFollowers();
+        presenter = new MainPresenter(this);
+        presenter.updateSelectedUserFollowingAndFollowers(selectedUser);
 
         TextView userName = findViewById(R.id.userName);
         userName.setText(selectedUser.getName());

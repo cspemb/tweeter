@@ -22,23 +22,38 @@ public class MainPresenter extends Presenter {
     }
 
     private final FollowService followService;
-    private final StatusService statusService;
+    private StatusService statusService;
     private final UserService userService;
+
+    private InputParser parser;
 
     private User selectedUser;
 
-    public MainPresenter(MainView view, User selectedUser) {
+    public MainPresenter(MainView view) {
         super(view);
         followService = new FollowService();
-        statusService = new StatusService();
         userService = new UserService();
-
-        this.selectedUser = selectedUser;
     }
 
     @Override
     protected MainView getView() {
         return (MainView) view;
+    }
+
+    protected StatusService getStatusService() {
+        if (statusService == null) {
+            statusService = new StatusService();
+        }
+
+        return statusService;
+    }
+
+    protected InputParser getParser() {
+        if (parser == null) {
+            parser = new InputParser();
+        }
+
+        return parser;
     }
 
     //isFollower
@@ -85,7 +100,8 @@ public class MainPresenter extends Presenter {
         }
     }
 
-    public void updateSelectedUserFollowingAndFollowers() {
+    public void updateSelectedUserFollowingAndFollowers(User selectedUser) {
+        this.selectedUser = selectedUser;
         followService.updateSelectedUserFollowingAndFollowers(selectedUser, new GetFollowersCountObserver(), new GetFollowingCountObserver());
     }
 
@@ -117,7 +133,7 @@ public class MainPresenter extends Presenter {
 
         @Override
         public void updateSelectedUserFollowingAndFollowers() {
-            MainPresenter.this.updateSelectedUserFollowingAndFollowers();
+            MainPresenter.this.updateSelectedUserFollowingAndFollowers(selectedUser);
         }
     }
 
@@ -147,7 +163,7 @@ public class MainPresenter extends Presenter {
 
     public void postStatus(String post) {
         try {
-            statusService.postStatus(post, InputParser.getFormattedDateTime(), InputParser.parseURLs(post), InputParser.parseMentions(post), new PostStatusObserver());
+            getStatusService().postStatus(post, getParser().getFormattedDateTime(), getParser().parseURLs(post), getParser().parseMentions(post), new PostStatusObserver());
         }
         catch (Exception exception) {
             Log.e(LOG_TAG, exception.getMessage(), exception);

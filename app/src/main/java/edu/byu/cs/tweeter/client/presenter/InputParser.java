@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InputParser {
-    public static String getFormattedDateTime() throws ParseException {
+    public String getFormattedDateTime() throws ParseException {
         SimpleDateFormat userFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         SimpleDateFormat statusFormat = new SimpleDateFormat("MMM d yyyy h:mm aaa");
 
         return statusFormat.format(userFormat.parse(LocalDate.now().toString() + " " + LocalTime.now().toString().substring(0, 8)));
     }
 
-    public static List<String> parseURLs(String post) {
+    public List<String> parseURLs(String post) {
         List<String> containedUrls = new ArrayList<>();
         for (String word : post.split("\\s")) {
             if (word.startsWith("http://") || word.startsWith("https://")) {
@@ -31,7 +31,7 @@ public class InputParser {
         return containedUrls;
     }
 
-    public static List<String> parseMentions(String post) {
+    public List<String> parseMentions(String post) {
         List<String> containedMentions = new ArrayList<>();
 
         for (String word : post.split("\\s")) {
@@ -46,7 +46,7 @@ public class InputParser {
         return containedMentions;
     }
 
-    public static int findUrlEndIndex(String word) {
+    public int findUrlEndIndex(String word) {
         if (word.contains(".com")) {
             int index = word.indexOf(".com");
             index += 4;
